@@ -29,6 +29,15 @@ def get_article_code( json_data ):
 	return article_code
 
 
+def get_article_code_from_name( name ):
+
+	query = form_query( name )
+	data = get_json_data( query )
+	return get_article_code( data ) [0]
+
+
+
+
 
 
 

@@ -74,5 +74,5 @@ def strip_html( data ):
 
 def clean( data ):
 	data = re.sub(r"\n", '' , data)
-	return strip_html(  strip_wikilinks (strip_curlys( strip_langs(  data)  ) ) )
-	# return strip_html( data )
+	#return strip_html(  strip_wikilinks (strip_curlys( strip_langs(  data)  ) ) )
+	return strip_wikilinks( strip_curlys( strip_html( data ) ) )
