@@ -38,23 +38,52 @@ def strip_curlys( data ):
 	return final + data[last_write:]
 
 
+def strip_File_tags( data ):
+	count = 0
+	last_write = 0
+	final = ""
+	i = 0
+	print "check pt 1"
+	while i < len(data) - 2:
+		if i < len(data) - 6 and count == 0 and data[i:i+6] =='[[File':
+			final += data[last_write : i]
+			count += 1
+			i += 6
+		elif data[i:i+2] == '[[':
+			count += 1
+			i += 2
+		elif data[i:i+2] == ']]':
+			count -= 1
+			if count == 0:
+				last_write = i + 2
+				i += 2
+		else:
+			i += 1
+			print "check pt %d" % i
+
+	return final + data[last_write:]
+
+
+
 def strip_wikilinks( data ):
 	function1 = lambda x : x.group(1) if not x.group(2) else x.group(2)
 	function2 = lambda x:  x.group(1)
 
-	r = "\[\[File.*?\|alt.*?\]\]"
-	level0 = re.sub(r, "", data)
+	print "check pt 0\n"
+
+	level0 = strip_File_tags( data )
+
+	print "check pt 1\n"
 
 	r = "\[\[[^\[]+?\|([^\|]*?)\]\]"
 	level1 = re.sub(r, function2, level0)
 
+	print "check pt 2\n"
+
 	r = "\[\[([^\|]+?)\]\]"
 	level2 = re.sub(r, function2, level1)
 
-	r="\[\[File.*?\]\]"
-	level3 = re.sub(r, "", level2)
-
-	return level3
+	return level0
 	
 
 def strip_html( data ):

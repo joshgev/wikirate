@@ -1,6 +1,10 @@
 import article
 import wikiclean
 import re
+import sys
+
+if __name__ == "__main__":
+	article_name = sys.argv[1]
 
 
 pipeline = [ 
@@ -17,8 +21,9 @@ pipeline = [
 ]
 
 
-a = article.Article( 'Jesus' , pipeline )
+a = article.Article( article_name , pipeline )
 
 
 # print a.html_has_been_stripped
 print a.processed.encode('utf-8')
+
