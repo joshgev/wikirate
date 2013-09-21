@@ -40,26 +40,27 @@ def strip_curlys( data ):
 
 def strip_File_tags( data ):
 	count = 0
+	counting = False
 	last_write = 0
 	final = ""
 	i = 0
-	print "check pt 1"
 	while i < len(data) - 2:
 		if i < len(data) - 6 and count == 0 and data[i:i+6] =='[[File':
+			counting = True
 			final += data[last_write : i]
 			count += 1
 			i += 6
-		elif data[i:i+2] == '[[':
+		elif counting and data[i:i+2] == '[[':
 			count += 1
 			i += 2
-		elif data[i:i+2] == ']]':
+		elif counting and data[i:i+2] == ']]':
 			count -= 1
 			if count == 0:
+				counting = False
 				last_write = i + 2
 				i += 2
 		else:
 			i += 1
-			print "check pt %d" % i
 
 	return final + data[last_write:]
 
@@ -69,21 +70,15 @@ def strip_wikilinks( data ):
 	function1 = lambda x : x.group(1) if not x.group(2) else x.group(2)
 	function2 = lambda x:  x.group(1)
 
-	print "check pt 0\n"
-
 	level0 = strip_File_tags( data )
-
-	print "check pt 1\n"
 
 	r = "\[\[[^\[]+?\|([^\|]*?)\]\]"
 	level1 = re.sub(r, function2, level0)
 
-	print "check pt 2\n"
-
 	r = "\[\[([^\|]+?)\]\]"
 	level2 = re.sub(r, function2, level1)
 
-	return level0
+	return level2
 	
 
 def strip_html( data ):
@@ -92,13 +87,20 @@ def strip_html( data ):
 
 	#<tag />
 	#<p>dfs</p>   good stuff <p>sdfkjdf</p>
-	r1 = r"<[\ ]*(?P<tag>[^>\ /]+)[^>/]*>.*?<\ */\ *(?P=tag)\ *>"
-	level1 = re.sub( r1 , "" , data)
-	r2 = r"<[^>]+/>"
-	level2 = re.sub( r2 , "" , level1 )
-	r3 = r"<!--.*?-->"
-	level3 = re.sub(r3, "", level2)
-	return level3
+	data = re.sub(r"&nbsp;", " ", data)
+	
+	r1 = r"<!--.*?-->"
+	level1 = re.sub(r1, "", data)
+	
+	r2 = r"<[^>]+?>"	
+	level2 = re.sub( r2 , "" , level1)
+	
+	#r2 = r"<[\ ]*[^>\ /]+>"	
+	#level2 = re.sub( r2 , "" , level1)
+	
+	#r3 = r"<[^>]+/>"
+	#level3 = re.sub( r3 , "" , level2b )
+	return level2
 
 
 def clean( data ):
