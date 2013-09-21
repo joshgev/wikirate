@@ -1,7 +1,7 @@
 import wikidownload
 import wikiclean
 
-class article:
+class Article:
 
 	def __init__( self , name , pipeline ):
 
@@ -20,12 +20,13 @@ class article:
 
 		for member_name , process in self.pipeline:
 
-			print data
-			d , member_value = process( data )
+			
+			data , member_value = process( data )
 
 
 			if member_name and member_value:
 				setattr( self , member_name , member_value)
+				
 
 
 
