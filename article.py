@@ -23,7 +23,6 @@ class Article:
 			
 			data , member_value = process( data )
 
-
 			if member_name and member_value:
 				setattr( self , member_name , member_value)
 				
