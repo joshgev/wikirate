@@ -1,6 +1,10 @@
 import article
 import wikiclean
 import re
+import sys
+
+if __name__ == "__main__":
+	article_name = sys.argv[1]
 
 
 def scan_heading( stream , pos):
@@ -112,7 +116,7 @@ pipeline = [
 ]
 
 
-a = article.Article( 'Jesus' , pipeline )
+a = article.Article( article_name , pipeline )
 
 
 
@@ -122,4 +126,7 @@ print get_sections(a.processed)[1]
 
 
 
+=======
+# print a.html_has_been_stripped
+print a.processed.encode('utf-8')
 
