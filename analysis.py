@@ -23,19 +23,10 @@ def scan_heading( stream , pos):
 
 	heading = stream[ occurs[0] : occurs[1] ].rstrip('=').lstrip('=')
 
-	# if len(occurs) > 3:
-	# 	# body = stream[ occurs[1] + count : occurs[2] ]
-	# 	remainder = stream[ occurs[2] + count : ]
-	# elif len(occurs) == 2:
-	# 	# body = stream[ occurs[1] : ]
-	# 	remainder = ''
-	# else:
-	# 	print "ERROR"
-
 	remainder = stream[occurs[1] + count : ]
 
 
-	return  [ [ count , heading ] , remainder ]
+	return  [ [ count , heading.rstrip().lstrip() ] , remainder ]
 
 
 
@@ -59,16 +50,23 @@ def read( stream ):
 def create_tree( headings ):
 
 	text , this_level , this_heading = headings[0]
+
 	del headings[0]
-	tree = [ [this_heading , text] ]
+	# tree = [ [this_heading , text] ]
+	tree = { this_heading : { 'text' : text } }
+	current_heading = this_heading
 	while len(headings) > 0:
 
 		text , level, heading = headings[0]
 	
 		if level > this_level:
-			tree.append( create_tree( headings ) )
+			# tree.append( create_tree( headings ) )
+			tree[ current_heading ][ 'sub' ] = create_tree( headings )
+
 		if level == this_level:
-			tree.append( [heading , text ] )
+			# tree.append( [heading , text ] )
+			tree[ heading  ] = { 'text' : text }
+			current_heading = heading
 			del headings[0]
 		if level < this_level:
 			return tree
@@ -88,18 +86,12 @@ def get_sections( code ):
 		inter,heading,code = read(code)
 	inters.append(inter)
 
-
-
-
-	# print "headings: ", headings
-	# print "inters: ", inters[1:]
-	# print "zip: ",zip( headings , inters[1:])
 	headings = [ [i] + h for h,i in zip( headings , inters[1:]) ]
 
-	# print "headings: ", headings
+
 	return create_tree(headings)
 
-# print get_articles( code )
+
 
 
 pipeline = [ 
@@ -122,11 +114,19 @@ a = article.Article( article_name , pipeline )
 
 # a.processed =  a.processed.encode('utf-8')
 # print a.processed
-print get_sections(a.processed)[1]
+# for i in get_sections( a.processed ):
+	# print i
+
+
+sections = get_sections(a.processed )
+for i in  sections.keys():
+	print i
+	if 'sub' in  sections[i].keys():
+		for j in sections[i]['sub'].keys():
+			print '\t',j
 
 
 
-=======
 # print a.html_has_been_stripped
-print a.processed.encode('utf-8')
+# print a.processed.encode('utf-8')
 
